@@ -11,21 +11,28 @@ const App = () => {
   const resultRefs = useRef([]);
 
   useEffect(() => {
-    // Erstelle alle möglichen 1x1-Paare mit eindeutigen Ergebnissen
-    const allPairs = [];
+    // Alle möglichen 1x1 Aufgaben und deren Ergebnisse generieren
+    const uniquePairs = [];
     for (let a = 1; a <= 10; a++) {
       for (let b = 1; b <= 10; b++) {
-        allPairs.push({ task: `${a} x ${b}`, result: a * b });
+        const result = a * b;
+        uniquePairs.push({ task: `${a} x ${b}`, result });
       }
     }
 
-    // Mische die Paare und wähle die ersten 10 aus
-    const shuffledPairs = allPairs.sort(() => Math.random() - 0.5).slice(0, 10);
-    const newResults = shuffledPairs.map(pair => pair.result);
+    // Zufällig 10 einzigartige Paare auswählen
+    const selectedPairs = [];
+    while (selectedPairs.length < 10) {
+      const randomIndex = Math.floor(Math.random() * uniquePairs.length);
+      const randomPair = uniquePairs[randomIndex];
+      if (!selectedPairs.find(pair => pair.result === randomPair.result)) {
+        selectedPairs.push(randomPair);
+      }
+    }
 
-    // Ergebnisse zufällig mischen
-    setResults(newResults.sort(() => Math.random() - 0.5));
-    setTasks(shuffledPairs);
+    // Aufgaben und Ergebnisse festlegen
+    setTasks(selectedPairs);
+    setResults(selectedPairs.map(pair => pair.result).sort(() => Math.random() - 0.5)); // Ergebnisse zufällig mischen
   }, []);
 
   const handleTaskClick = (task) => {
@@ -47,8 +54,6 @@ const App = () => {
       setSelectedResult(null);
     }
   }, [selectedTask, selectedResult]);
-
-  const isMatched = (task, result) => matchedPairs.some(pair => pair.task === task && pair.result === result);
 
   return (
     <div className="memory-game">
