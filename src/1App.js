@@ -11,25 +11,21 @@ const App = () => {
   const resultRefs = useRef([]);
 
   useEffect(() => {
-    const newTasks = [];
-    const newResults = new Set(); // Set für eindeutige Ergebnisse
-
-    // 10 eindeutige 1x1 Aufgaben generieren
-    while (newTasks.length < 10) {
-      const a = Math.floor(Math.random() * 9) + 1; // Zahlen zwischen 1 und 9
-      const b = Math.floor(Math.random() * 9) + 1; // Zahlen zwischen 1 und 9
-      const result = a * b;
-
-      // Falls das Ergebnis schon existiert, eine neue Aufgabe generieren
-      if (!newResults.has(result)) {
-        newTasks.push({ task: `${a} x ${b}`, result });
-        newResults.add(result); // Ergebnis zu Set hinzufügen
+    // Erstelle alle möglichen 1x1-Paare mit eindeutigen Ergebnissen
+    const allPairs = [];
+    for (let a = 1; a <= 10; a++) {
+      for (let b = 1; b <= 10; b++) {
+        allPairs.push({ task: `${a} x ${b}`, result: a * b });
       }
     }
 
+    // Mische die Paare und wähle die ersten 10 aus
+    const shuffledPairs = allPairs.sort(() => Math.random() - 0.5).slice(0, 10);
+    const newResults = shuffledPairs.map(pair => pair.result);
+
     // Ergebnisse zufällig mischen
-    setResults([...newResults].sort(() => Math.random() - 0.5));
-    setTasks(newTasks);
+    setResults(newResults.sort(() => Math.random() - 0.5));
+    setTasks(shuffledPairs);
   }, []);
 
   const handleTaskClick = (task) => {
