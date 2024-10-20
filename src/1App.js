@@ -16,8 +16,8 @@ const App = () => {
 
     // 10 eindeutige 1x1 Aufgaben generieren
     while (newTasks.length < 10) {
-      const a = Math.floor(Math.random() * 10) + 1;
-      const b = Math.floor(Math.random() * 10) + 1;
+      const a = Math.floor(Math.random() * 9) + 1; // Zahlen zwischen 1 und 9
+      const b = Math.floor(Math.random() * 9) + 1; // Zahlen zwischen 1 und 9
       const result = a * b;
 
       // Falls das Ergebnis schon existiert, eine neue Aufgabe generieren
