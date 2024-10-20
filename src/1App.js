@@ -11,26 +11,28 @@ const App = () => {
   const resultRefs = useRef([]);
 
   useEffect(() => {
-    // Alle möglichen 1x1 Aufgaben und deren Ergebnisse generieren
     const uniquePairs = [];
+    const uniqueResults = new Set();
+
+    // Erstelle eindeutige Aufgaben und Ergebnisse
     for (let a = 1; a <= 10; a++) {
       for (let b = 1; b <= 10; b++) {
         const result = a * b;
-        uniquePairs.push({ task: `${a} x ${b}`, result });
+        if (!uniqueResults.has(result)) { // Prüfe, ob das Ergebnis bereits existiert
+          uniquePairs.push({ task: `${a} x ${b}`, result });
+          uniqueResults.add(result); // Ergebnis zum Set hinzufügen
+        }
       }
     }
 
-    // Zufällig 10 einzigartige Paare auswählen
+    // Wähle zufällig 10 Aufgaben aus
     const selectedPairs = [];
     while (selectedPairs.length < 10) {
       const randomIndex = Math.floor(Math.random() * uniquePairs.length);
-      const randomPair = uniquePairs[randomIndex];
-      if (!selectedPairs.find(pair => pair.result === randomPair.result)) {
-        selectedPairs.push(randomPair);
-      }
+      selectedPairs.push(uniquePairs[randomIndex]);
+      uniquePairs.splice(randomIndex, 1); // Entferne das ausgewählte Paar, um doppelte Auswahl zu verhindern
     }
 
-    // Aufgaben und Ergebnisse festlegen
     setTasks(selectedPairs);
     setResults(selectedPairs.map(pair => pair.result).sort(() => Math.random() - 0.5)); // Ergebnisse zufällig mischen
   }, []);
