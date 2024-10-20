@@ -4,16 +4,16 @@ import './App.css';
 const App = () => {
   // Aufgaben und Ergebnisse direkt im Code definieren
   const taskPairs = [
-    { task: '1 x 1', result: 1 },
-    { task: '1 x 2', result: 2 },
-    { task: '1 x 3', result: 3 },
-    { task: '1 x 4', result: 4 },
-    { task: '1 x 5', result: 5 },
-    { task: '1 x 6', result: 6 },
-    { task: '1 x 7', result: 7 },
-    { task: '1 x 8', result: 8 },
-    { task: '1 x 9', result: 9 },
-    { task: '1 x 10', result: 10 }
+    { task: '8 x 6', result: 24 },
+    { task: '6 x 7', result: 36 },
+    { task: '9 x 6', result: 28 },
+    { task: '7 x 8', result: 27 },
+    { task: '9 x 4', result: 42 },
+    { task: '4 x 7', result: 24 },
+    { task: '7 x 9', result: 56 },
+    { task: '9 x 3', result: 54 },
+    { task: '3 x 8', result: 63 },
+    { task: '6 x 4', result: 48 }
   ];
 
   const [tasks, setTasks] = useState([]);
