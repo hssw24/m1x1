@@ -1,21 +1,8 @@
+// Version mit doppelten Ergebnissen und Phantommarkierung
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 const App = () => {
-  // Aufgaben und Ergebnisse direkt im Code definieren
-  const taskPairs = [
-    { task: '1 x 1', result: 1 },
-    { task: '1 x 2', result: 2 },
-    { task: '1 x 3', result: 3 },
-    { task: '1 x 4', result: 4 },
-    { task: '1 x 5', result: 5 },
-    { task: '1 x 6', result: 6 },
-    { task: '1 x 7', result: 7 },
-    { task: '1 x 8', result: 8 },
-    { task: '1 x 9', result: 9 },
-    { task: '1 x 10', result: 10 }
-  ];
-
   const [tasks, setTasks] = useState([]);
   const [results, setResults] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -25,30 +12,47 @@ const App = () => {
   const resultRefs = useRef([]);
 
   useEffect(() => {
-    // Aufgaben und Ergebnisse festlegen
-    setTasks(taskPairs);
-    setResults(taskPairs.map(pair => pair.result));
+    // 10 zufällige 1x1 Aufgaben generieren
+    const newTasks = [];
+    const newResults = [];
+    for (let i = 1; i <= 10; i++) {
+      const a = Math.floor(Math.random() * 10) + 1;
+      const b = Math.floor(Math.random() * 10) + 1;
+      newTasks.push({ task: `${a} x ${b}`, result: a * b });
+      newResults.push(a * b);
+    }
+
+    // Ergebnisse zufällig mischen
+    setResults(newResults.sort(() => Math.random() - 0.5));
+    setTasks(newTasks);
   }, []);
 
   const handleTaskClick = (task) => {
-    if (selectedTask === task || matchedPairs.find(pair => pair.task === task)) return;
+    // Verhindere Mehrfachauswahl derselben Aufgabe
+    if (selectedTask === task || matchedPairs.includes(task.result)) return;
     setSelectedTask(task);
   };
 
   const handleResultClick = (result) => {
-    if (selectedResult === result || matchedPairs.find(pair => pair.result === result && pair.task === selectedTask)) return;
+    // Verhindere Mehrfachauswahl desselben Ergebnisses
+    if (selectedResult === result || matchedPairs.includes(result)) return;
     setSelectedResult(result);
   };
 
   useEffect(() => {
+    // Wenn beide Karten (Aufgabe und Ergebnis) ausgewählt wurden
     if (selectedTask && selectedResult) {
       if (selectedTask.result === selectedResult) {
-        setMatchedPairs((prevPairs) => [...prevPairs, { task: selectedTask, result: selectedResult }]);
+        setMatchedPairs((prevPairs) => [...prevPairs, selectedTask.result]);
       }
+
+      // Beide Auswahlen zurücksetzen
       setSelectedTask(null);
       setSelectedResult(null);
     }
   }, [selectedTask, selectedResult]);
+
+  const isMatched = (result) => matchedPairs.includes(result);
 
   return (
     <div className="memory-game">
@@ -62,7 +66,7 @@ const App = () => {
               className={`task ${selectedTask === task ? 'selected' : ''}`}
               onClick={() => handleTaskClick(task)}
               style={{
-                backgroundColor: matchedPairs.find(pair => pair.task === task) ? '#d4edda' : '#f0f0f0',
+                backgroundColor: isMatched(task.result) ? '#d4edda' : '#f0f0f0',
               }}
               ref={(el) => (taskRefs.current[index] = el)}
             >
@@ -76,7 +80,7 @@ const App = () => {
             <div
               key={index}
               className={`result ${selectedResult === result ? 'selected' : ''} ${
-                matchedPairs.find(pair => pair.result === result) ? 'matched' : ''
+                isMatched(result) ? 'matched' : ''
               }`}
               onClick={() => handleResultClick(result)}
               ref={(el) => (resultRefs.current[index] = el)}
@@ -89,23 +93,24 @@ const App = () => {
 
       {/* Linienverbindung bei passenden Paaren */}
       <svg className="lines">
-        {matchedPairs.map(({ task, result }) => {
-          const taskIndex = tasks.findIndex((t) => t === task);
+        {matchedPairs.map((result) => {
+          const taskIndex = tasks.findIndex((task) => task.result === result);
           const resultIndex = results.findIndex((res) => res === result);
 
           if (taskRefs.current[taskIndex] && resultRefs.current[resultIndex]) {
+            // Berechnung der Y-Positionen der Kartenmitte + leichter Offset
             const taskRect = taskRefs.current[taskIndex].getBoundingClientRect();
             const resultRect = resultRefs.current[resultIndex].getBoundingClientRect();
-            const taskY = taskRect.top + taskRect.height * 0.35;
-            const resultY = resultRect.top + resultRect.height * 0.35;
+            const taskY = taskRect.top + taskRect.height * 0.35; // Etwas höher als die Mitte
+            const resultY = resultRect.top + resultRect.height * 0.35; // Etwas höher als die Mitte
 
             return (
               <line
-                key={`${task.task}-${result}`}
-                x1="40%"
-                y1={`${taskY}px`}
-                x2="60%"
-                y2={`${resultY}px`}
+                key={result}
+                x1="40%" // Rechter Rand der Aufgaben
+                y1={`${taskY}px`} // Leicht über der Mitte der Aufgabe
+                x2="60%" // Linker Rand der Ergebnisse
+                y2={`${resultY}px`} // Leicht über der Mitte des Ergebnisses
                 stroke="black"
                 strokeWidth="2"
               />
