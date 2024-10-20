@@ -11,42 +11,42 @@ const App = () => {
   const resultRefs = useRef([]);
 
   useEffect(() => {
-    // 10 zufällige 1x1 Aufgaben generieren
     const newTasks = [];
-    const newResults = [];
-    for (let i = 1; i <= 10; i++) {
+    const newResults = new Set(); // Set für eindeutige Ergebnisse
+
+    // 10 eindeutige 1x1 Aufgaben generieren
+    while (newTasks.length < 10) {
       const a = Math.floor(Math.random() * 10) + 1;
       const b = Math.floor(Math.random() * 10) + 1;
-      newTasks.push({ task: `${a} x ${b}`, result: a * b });
-      newResults.push(a * b);
+      const result = a * b;
+
+      // Falls das Ergebnis schon existiert, eine neue Aufgabe generieren
+      if (!newResults.has(result)) {
+        newTasks.push({ task: `${a} x ${b}`, result });
+        newResults.add(result); // Ergebnis zu Set hinzufügen
+      }
     }
 
     // Ergebnisse zufällig mischen
-    setResults(newResults.sort(() => Math.random() - 0.5));
+    setResults([...newResults].sort(() => Math.random() - 0.5));
     setTasks(newTasks);
   }, []);
 
   const handleTaskClick = (task) => {
-    // Verhindere Mehrfachauswahl derselben Aufgabe
     if (selectedTask === task || matchedPairs.find(pair => pair.task === task)) return;
     setSelectedTask(task);
   };
 
   const handleResultClick = (result) => {
-    // Verhindere Mehrfachauswahl desselben Ergebnisses
     if (selectedResult === result || matchedPairs.find(pair => pair.result === result && pair.task === selectedTask)) return;
     setSelectedResult(result);
   };
 
   useEffect(() => {
-    // Wenn beide Karten (Aufgabe und Ergebnis) ausgewählt wurden
     if (selectedTask && selectedResult) {
       if (selectedTask.result === selectedResult) {
-        // Einzigartige Aufgabe-Ergebnis-Paare speichern
         setMatchedPairs((prevPairs) => [...prevPairs, { task: selectedTask, result: selectedResult }]);
       }
-
-      // Beide Auswahlen zurücksetzen
       setSelectedTask(null);
       setSelectedResult(null);
     }
@@ -98,19 +98,18 @@ const App = () => {
           const resultIndex = results.findIndex((res) => res === result);
 
           if (taskRefs.current[taskIndex] && resultRefs.current[resultIndex]) {
-            // Berechnung der Y-Positionen der Kartenmitte + leichter Offset
             const taskRect = taskRefs.current[taskIndex].getBoundingClientRect();
             const resultRect = resultRefs.current[resultIndex].getBoundingClientRect();
-            const taskY = taskRect.top + taskRect.height * 0.35; // Etwas höher als die Mitte
-            const resultY = resultRect.top + resultRect.height * 0.35; // Etwas höher als die Mitte
+            const taskY = taskRect.top + taskRect.height * 0.35;
+            const resultY = resultRect.top + resultRect.height * 0.35;
 
             return (
               <line
                 key={`${task.task}-${result}`}
-                x1="40%" // Rechter Rand der Aufgaben
-                y1={`${taskY}px`} // Leicht über der Mitte der Aufgabe
-                x2="60%" // Linker Rand der Ergebnisse
-                y2={`${resultY}px`} // Leicht über der Mitte des Ergebnisses
+                x1="40%"
+                y1={`${taskY}px`}
+                x2="60%"
+                y2={`${resultY}px`}
                 stroke="black"
                 strokeWidth="2"
               />
