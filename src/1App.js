@@ -27,26 +27,32 @@ const App = () => {
   }, []);
 
   const handleTaskClick = (task) => {
-    if (selectedTask === task) return;
+    // Verhindere Mehrfachauswahl derselben Aufgabe
+    if (selectedTask === task || matchedPairs.find(pair => pair.task === task)) return;
     setSelectedTask(task);
   };
 
   const handleResultClick = (result) => {
-    if (selectedResult === result) return;
+    // Verhindere Mehrfachauswahl desselben Ergebnisses
+    if (selectedResult === result || matchedPairs.find(pair => pair.result === result && pair.task === selectedTask)) return;
     setSelectedResult(result);
   };
 
   useEffect(() => {
+    // Wenn beide Karten (Aufgabe und Ergebnis) ausgewählt wurden
     if (selectedTask && selectedResult) {
       if (selectedTask.result === selectedResult) {
-        setMatchedPairs([...matchedPairs, selectedTask.result]);
+        // Einzigartige Aufgabe-Ergebnis-Paare speichern
+        setMatchedPairs((prevPairs) => [...prevPairs, { task: selectedTask, result: selectedResult }]);
       }
+
+      // Beide Auswahlen zurücksetzen
       setSelectedTask(null);
       setSelectedResult(null);
     }
-  }, [selectedTask, selectedResult, matchedPairs]);
+  }, [selectedTask, selectedResult]);
 
-  const isMatched = (result) => matchedPairs.includes(result);
+  const isMatched = (task, result) => matchedPairs.some(pair => pair.task === task && pair.result === result);
 
   return (
     <div className="memory-game">
@@ -60,7 +66,7 @@ const App = () => {
               className={`task ${selectedTask === task ? 'selected' : ''}`}
               onClick={() => handleTaskClick(task)}
               style={{
-                backgroundColor: isMatched(task.result) ? '#d4edda' : '#f0f0f0',
+                backgroundColor: matchedPairs.find(pair => pair.task === task) ? '#d4edda' : '#f0f0f0',
               }}
               ref={(el) => (taskRefs.current[index] = el)}
             >
@@ -74,7 +80,7 @@ const App = () => {
             <div
               key={index}
               className={`result ${selectedResult === result ? 'selected' : ''} ${
-                isMatched(result) ? 'matched' : ''
+                matchedPairs.find(pair => pair.result === result) ? 'matched' : ''
               }`}
               onClick={() => handleResultClick(result)}
               ref={(el) => (resultRefs.current[index] = el)}
@@ -87,8 +93,8 @@ const App = () => {
 
       {/* Linienverbindung bei passenden Paaren */}
       <svg className="lines">
-        {matchedPairs.map((result) => {
-          const taskIndex = tasks.findIndex((task) => task.result === result);
+        {matchedPairs.map(({ task, result }) => {
+          const taskIndex = tasks.findIndex((t) => t === task);
           const resultIndex = results.findIndex((res) => res === result);
 
           if (taskRefs.current[taskIndex] && resultRefs.current[resultIndex]) {
@@ -100,7 +106,7 @@ const App = () => {
 
             return (
               <line
-                key={result}
+                key={`${task.task}-${result}`}
                 x1="40%" // Rechter Rand der Aufgaben
                 y1={`${taskY}px`} // Leicht über der Mitte der Aufgabe
                 x2="60%" // Linker Rand der Ergebnisse
