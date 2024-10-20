@@ -27,29 +27,24 @@ const App = () => {
   }, []);
 
   const handleTaskClick = (task) => {
-    // Verhindere Mehrfachauswahl derselben Aufgabe
-    if (selectedTask === task || matchedPairs.includes(task.result)) return;
+    if (selectedTask === task) return;
     setSelectedTask(task);
   };
 
   const handleResultClick = (result) => {
-    // Verhindere Mehrfachauswahl desselben Ergebnisses
-    if (selectedResult === result || matchedPairs.includes(result)) return;
+    if (selectedResult === result) return;
     setSelectedResult(result);
   };
 
   useEffect(() => {
-    // Wenn beide Karten (Aufgabe und Ergebnis) ausgewählt wurden
     if (selectedTask && selectedResult) {
       if (selectedTask.result === selectedResult) {
-        setMatchedPairs((prevPairs) => [...prevPairs, selectedTask.result]);
+        setMatchedPairs([...matchedPairs, selectedTask.result]);
       }
-
-      // Beide Auswahlen zurücksetzen
       setSelectedTask(null);
       setSelectedResult(null);
     }
-  }, [selectedTask, selectedResult]);
+  }, [selectedTask, selectedResult, matchedPairs]);
 
   const isMatched = (result) => matchedPairs.includes(result);
 

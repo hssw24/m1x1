@@ -1,85 +1,86 @@
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  padding: 10px;
-}
-
-.memory-game {
-  text-align: center;
-  margin: 20px auto;
-  max-width: 600px;
-  position: relative;
-}
-
-.game-board {
-  display: flex;
-  justify-content: space-between;
-  position: relative;
-}
-
-.tasks,
-.results {
-  width: 40%;
-}
-
-.task,
-.result {
-  background-color: #f0f0f0;
-  padding: 20px;
-  margin: 10px;
-  border-radius: 8px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.task.selected,
-.result.selected {
-  background-color: #d1e7dd;
-}
-
-.result.matched {
-  background-color: #d4edda;
-  pointer-events: none;
-}
-
-/* SVG für die Linienverbindung */
-.lines {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-}
-
-/* Linie kommt von rechtem Rand der Aufgabe zur Mitte */
-line {
-  x1: 100%; /* rechter Rand der Aufgabenkarte */
-  y1: 50%;  /* Mitte der Aufgabenkarte */
-  x2: 0%;   /* linker Rand der Ergebniskarte */
-  y2: 50%;  /* Mitte der Ergebniskarte */
-}
-
-@media (max-width: 768px) {
-  .game-board {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
-
+  
+  body {
+    font-family: Arial, sans-serif;
+    padding: 10px;
+  }
+  
+  .memory-game {
+    text-align: center;
+    margin: 20px auto;
+    max-width: 600px;
+    position: relative;
+  }
+  
+  .game-board {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+  }
+  
+  .tasks,
+  .results {
+    width: 40%;
+  }
+  
   .task,
   .result {
-    font-size: 24px;
+    background-color: #f0f0f0;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s;
   }
-
-  .tasks, 
-  .results {
-    width: 45%;
+  
+  .task.selected,
+  .result.selected {
+    background-color: #d1e7dd;
   }
-}
+  
+  .result.matched {
+    background-color: #d4edda;
+    pointer-events: none;
+  }
+  
+  /* SVG für die Linienverbindung */
+  .lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+  
+  /* Linie kommt von rechtem Rand der Aufgabe zur Mitte */
+  line {
+    x1: 100%; /* rechter Rand der Aufgabenkarte */
+    y1: 50%;  /* Mitte der Aufgabenkarte */
+    x2: 0%;   /* linker Rand der Ergebniskarte */
+    y2: 50%;  /* Mitte der Ergebniskarte */
+  }
+  
+  @media (max-width: 768px) {
+    .game-board {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+  
+    .task,
+    .result {
+      font-size: 24px;
+    }
+  
+    .tasks, 
+    .results {
+      width: 45%;
+    }
+  }
+  
