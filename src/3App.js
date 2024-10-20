@@ -16,82 +16,50 @@ const App = () => {
     { task: '6 x 4', result: 24 }
   ];
 
-
   const [tasks, setTasks] = useState([]);
   const [results, setResults] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectedResult, setSelectedResult] = useState(null);
   const [matchedPairs, setMatchedPairs] = useState([]);
-  const [gameOver, setGameOver] = useState(false);
   const taskRefs = useRef([]);
   const resultRefs = useRef([]);
 
   useEffect(() => {
-    startNewGame();
+    // Aufgaben und Ergebnisse festlegen
+    setTasks(taskPairs);
+    setResults(taskPairs.map(pair => pair.result));
   }, []);
 
-  const shuffleResults = (resultsArray) => {
-    for (let i = resultsArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [resultsArray[i], resultsArray[j]] = [resultsArray[j], resultsArray[i]]; // Elemente vertauschen
-    }
-    return resultsArray;
-  };
-
-  const startNewGame = () => {
-    const shuffledResults = shuffleResults(taskPairs.map(pair => pair.result));
-    setTasks(taskPairs);
-    setResults(shuffledResults);
-    setMatchedPairs([]);
-    setSelectedTask(null);
-    setSelectedResult(null);
-    setGameOver(false);
-  };
-
   const handleTaskClick = (task) => {
-    if (matchedPairs.find(pair => pair.task === task)) return;
-
-    // Aufgabe markieren
+    if (selectedTask === task || matchedPairs.find(pair => pair.task === task)) return;
     setSelectedTask(task);
   };
 
   const handleResultClick = (result) => {
-    if (matchedPairs.find(pair => pair.result === result)) return;
-
-    // Ergebnis markieren
+    if (selectedResult === result || matchedPairs.find(pair => pair.result === result && pair.task === selectedTask)) return;
     setSelectedResult(result);
   };
 
   useEffect(() => {
     if (selectedTask && selectedResult) {
-      const correctPair = tasks.find(t => t.result === selectedResult && t.task === selectedTask.task);
-      if (correctPair) {
-        setMatchedPairs(prevPairs => [...prevPairs, { task: selectedTask, result: selectedResult }]);
+      if (selectedTask.result === selectedResult) {
+        setMatchedPairs((prevPairs) => [...prevPairs, { task: selectedTask, result: selectedResult }]);
       }
-
-      // Überprüfen, ob das Spiel zu Ende ist
-      if (matchedPairs.length + 1 === tasks.length) {
-        setGameOver(true);
-      }
-
-      // Zurücksetzen der Auswahl
       setSelectedTask(null);
       setSelectedResult(null);
     }
-  }, [selectedTask, selectedResult, tasks, matchedPairs]);
+  }, [selectedTask, selectedResult]);
 
   return (
     <div className="memory-game">
-      <h1>1x1</h1>
+      <h1>1x1 Memory Spiel</h1>
       <div className="game-board">
         <div className="tasks">
           <h2>Aufgaben</h2>
           {tasks.map((task, index) => (
             <div
               key={index}
-              className={`task ${selectedTask === task ? 'selected' : ''} ${
-                matchedPairs.find(pair => pair.task === task) ? 'matched' : ''
-              }`}
+              className={`task ${selectedTask === task ? 'selected' : ''}`}
               onClick={() => handleTaskClick(task)}
               style={{
                 backgroundColor: matchedPairs.find(pair => pair.task === task) ? '#d4edda' : '#f0f0f0',
@@ -111,7 +79,6 @@ const App = () => {
                 matchedPairs.find(pair => pair.result === result) ? 'matched' : ''
               }`}
               onClick={() => handleResultClick(result)}
-
               ref={(el) => (resultRefs.current[index] = el)}
             >
               {result}
@@ -147,12 +114,6 @@ const App = () => {
           return null;
         })}
       </svg>
-
-      {gameOver && (
-        <div className="restart-container">
-          <button onClick={startNewGame}>Nochmal spielen?</button>
-        </div>
-      )}
     </div>
   );
 };

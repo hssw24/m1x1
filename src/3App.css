@@ -66,10 +66,6 @@
     y2: 50%;  /* Mitte der Ergebniskarte */
   }
   
-  .selected {
-    background-color: #cce5ff; /* Blau für ausgewählte Aufgaben/Ergebnisse */
-  }
-
   @media (max-width: 768px) {
     .game-board {
       flex-direction: row;

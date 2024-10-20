@@ -4,61 +4,48 @@ import './App.css';
 const App = () => {
   // Aufgaben und Ergebnisse direkt im Code definieren
   const taskPairs = [
-    { task: '8 x 6', result: 48 },
-    { task: '6 x 7', result: 42 },
-    { task: '9 x 6', result: 54 },
-    { task: '7 x 8', result: 56 },
-    { task: '9 x 4', result: 36 },
-    { task: '4 x 7', result: 28 },
-    { task: '7 x 9', result: 63 },
-    { task: '9 x 3', result: 27 },
-    { task: '3 x 7', result: 21 },
-    { task: '6 x 4', result: 24 }
+    { task: '1 x 1', result: 1 },
+    { task: '1 x 2', result: 2 },
+    { task: '1 x 3', result: 3 },
+    { task: '1 x 4', result: 4 },
+    { task: '1 x 5', result: 5 },
+    { task: '1 x 6', result: 6 },
+    { task: '1 x 7', result: 7 },
+    { task: '1 x 8', result: 8 },
+    { task: '1 x 9', result: 9 },
+    { task: '1 x 10', result: 10 },
   ];
-
 
   const [tasks, setTasks] = useState([]);
   const [results, setResults] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectedResult, setSelectedResult] = useState(null);
   const [matchedPairs, setMatchedPairs] = useState([]);
-  const [gameOver, setGameOver] = useState(false);
   const taskRefs = useRef([]);
   const resultRefs = useRef([]);
 
   useEffect(() => {
-    startNewGame();
+    // Aufgaben und Ergebnisse festlegen
+    const shuffledResults = shuffleResults(taskPairs.map(pair => pair.result));
+    setTasks(taskPairs);
+    setResults(shuffledResults);
   }, []);
 
   const shuffleResults = (resultsArray) => {
     for (let i = resultsArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [resultsArray[i], resultsArray[j]] = [resultsArray[j], resultsArray[i]]; // Elemente vertauschen
+      [resultsArray[i], resultsArray[j]] = [resultsArray[j], resultsArray[i]]; // Swap elements
     }
     return resultsArray;
   };
 
-  const startNewGame = () => {
-    const shuffledResults = shuffleResults(taskPairs.map(pair => pair.result));
-    setTasks(taskPairs);
-    setResults(shuffledResults);
-    setMatchedPairs([]);
-    setSelectedTask(null);
-    setSelectedResult(null);
-    setGameOver(false);
-  };
-
   const handleTaskClick = (task) => {
-    if (matchedPairs.find(pair => pair.task === task)) return;
-
-    // Aufgabe markieren
+    if (selectedTask === task || matchedPairs.find(pair => pair.task === task)) return;
     setSelectedTask(task);
   };
 
   const handleResultClick = (result) => {
-    if (matchedPairs.find(pair => pair.result === result)) return;
-
-    // Ergebnis markieren
+    if (selectedResult === result || matchedPairs.find(pair => pair.result === result && pair.task === selectedTask)) return;
     setSelectedResult(result);
   };
 
@@ -68,30 +55,21 @@ const App = () => {
       if (correctPair) {
         setMatchedPairs(prevPairs => [...prevPairs, { task: selectedTask, result: selectedResult }]);
       }
-
-      // Überprüfen, ob das Spiel zu Ende ist
-      if (matchedPairs.length + 1 === tasks.length) {
-        setGameOver(true);
-      }
-
-      // Zurücksetzen der Auswahl
       setSelectedTask(null);
       setSelectedResult(null);
     }
-  }, [selectedTask, selectedResult, tasks, matchedPairs]);
+  }, [selectedTask, selectedResult, tasks]);
 
   return (
     <div className="memory-game">
-      <h1>1x1</h1>
+      <h1>1x1 Memory Spiel</h1>
       <div className="game-board">
         <div className="tasks">
           <h2>Aufgaben</h2>
           {tasks.map((task, index) => (
             <div
               key={index}
-              className={`task ${selectedTask === task ? 'selected' : ''} ${
-                matchedPairs.find(pair => pair.task === task) ? 'matched' : ''
-              }`}
+              className={`task ${selectedTask === task ? 'selected' : ''}`}
               onClick={() => handleTaskClick(task)}
               style={{
                 backgroundColor: matchedPairs.find(pair => pair.task === task) ? '#d4edda' : '#f0f0f0',
@@ -111,7 +89,6 @@ const App = () => {
                 matchedPairs.find(pair => pair.result === result) ? 'matched' : ''
               }`}
               onClick={() => handleResultClick(result)}
-
               ref={(el) => (resultRefs.current[index] = el)}
             >
               {result}
@@ -147,12 +124,6 @@ const App = () => {
           return null;
         })}
       </svg>
-
-      {gameOver && (
-        <div className="restart-container">
-          <button onClick={startNewGame}>Nochmal spielen?</button>
-        </div>
-      )}
     </div>
   );
 };

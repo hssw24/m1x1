@@ -1,0 +1,54 @@
+.memory-game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .game-board {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    margin: 20px 0;
+  }
+  
+  .tasks, .results {
+    flex: 1;
+    margin: 0 10px;
+  }
+  
+  .task, .result {
+    padding: 15px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .selected {
+    background-color: #cce5ff; /* Blau für ausgewählte Aufgaben/Ergebnisse */
+  }
+  
+  .matched {
+    background-color: #d4edda; /* Grün für passende Paare */
+  }
+  
+  .restart-container {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .restart-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .restart-container button:hover {
+    background-color: #0056b3;
+  }
+  
